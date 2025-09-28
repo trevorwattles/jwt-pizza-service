@@ -66,24 +66,9 @@ jobs:
           version=$(date +'%Y%m%d.%H%M%S')
           echo "version=$version" >> "$GITHUB_OUTPUT"
           printf '{"version": "%s" }' "$version" > src/version.json
-      - name: Debug secrets
-        run: |
-            echo "NET_ID length: ${#NET_ID}"
-            echo "NET_ID starts with: ${NET_ID:0:3}"
-            echo "API_KEY length: ${#FACTORY_API_KEY}"
-            echo "API_KEY starts with: ${FACTORY_API_KEY:0:3}"
-        env:
-            NET_ID: ${{ secrets.NET_ID }}
-            FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
-    
+
       - name: Update coverage
-        env:
-          NET_ID: ${{ secrets.NET_ID }}
-          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
         run: |
-            coverage=$(jq '.total.lines.pct' coverage/coverage-summary.json)
-            color=$(echo "$coverage < 80" | bc | awk '{if ($1) print "red"; else print "green"}')
-            echo "Coverage: $coverage"
-            echo "Color: $color"
-            response=$(curl -s -X POST "https://pizza-factory.cs329.click/api/badge/${NET_ID}/jwtpizzaservicecoverage?label=Coverage&value=$coverage%25&color=$color" -H "authorization: bearer ${FACTORY_API_KEY}")
-            echo "Full badge service response: $response"
+          coverage=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+          color=$(echo "$coverage < 80" | bc | awk '{if ($1) print "red"; else print "green"}')
+          curl -s -X POST "https://pizza-factory.cs329.click/api/badge/${{ secrets.NET_ID }}/jwtpizzaservicecoverage?label=Coverage&value=$coverage%25&color=$color" -H "authorization: bearer ${{ secrets.FACTORY_API_KEY }}"
