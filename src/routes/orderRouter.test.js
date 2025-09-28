@@ -3,7 +3,6 @@ const app = require('../service');
 
 describe('Order Router', () => {
   let regularUserToken;
-  let adminUserToken;
   let regularUser = {
     name: 'Regular User',
     email: Math.random().toString(36).substring(2, 12) + '@test.com',

@@ -4,7 +4,6 @@ const app = require('../service');
 describe('User Router', () => {
   let userToken;
   let userId;
-  let otherUserToken;
   let otherUserId;
   
   const testUser = {
@@ -32,7 +31,6 @@ describe('User Router', () => {
     const otherRegisterRes = await request(app)
       .post('/api/auth')
       .send(otherUser);
-    otherUserToken = otherRegisterRes.body.token;
     otherUserId = otherRegisterRes.body.user.id;
   });
 

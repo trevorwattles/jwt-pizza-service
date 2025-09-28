@@ -4,8 +4,6 @@ const app = require('../service');
 describe('Franchise Router', () => {
   let regularUserToken;
   let regularUserId;
-  let adminUserToken;
-  let adminUserId;
   
   const regularUser = {
     name: 'Regular User',
