@@ -16,9 +16,6 @@ describe('Order Router', () => {
       .post('/api/auth')
       .send(regularUser);
     regularUserToken = registerRes.body.token;
-
-    // Try to create an admin user (this might not work depending on your DB setup)
-    // We'll test admin functionality but expect 403 errors for non-admins
   });
 
   describe('GET /api/order/menu', () => {
@@ -63,7 +60,6 @@ describe('Order Router', () => {
         .set('Authorization', `Bearer ${regularUserToken}`)
         .send(newMenuItem);
       
-      // Should fail with 403 since regular user is not admin
       expect(response.status).toBe(403);
       expect(response.body.message).toBe('unable to add menu item');
     });
@@ -84,7 +80,6 @@ describe('Order Router', () => {
         .set('Authorization', `Bearer ${regularUserToken}`)
         .send({ title: 'Incomplete' });
       
-      // Should fail due to non-admin status, not missing fields
       expect(response.status).toBe(403);
     });
   });
@@ -105,7 +100,6 @@ describe('Order Router', () => {
       
       expect(response.status).toBe(200);
       expect(response.body).toBeDefined();
-      // Should have dinerId, orders array, and page
       expect(response.body).toHaveProperty('orders');
       expect(Array.isArray(response.body.orders)).toBe(true);
     });
@@ -157,15 +151,12 @@ describe('Order Router', () => {
         .set('Authorization', `Bearer ${regularUserToken}`)
         .send(validOrder);
       
-      // This will likely fail at the factory API call, but should test our code
-      // The response could be 200 (success) or 500 (factory failure)
       expect([200, 500]).toContain(response.status);
       
       if (response.status === 200) {
         expect(response.body).toHaveProperty('order');
         expect(response.body).toHaveProperty('jwt');
       } else if (response.status === 500) {
-        // Accept any error message from the factory/database
         expect(response.body).toHaveProperty('message');
       }
     });
@@ -191,7 +182,6 @@ describe('Order Router', () => {
         .set('Authorization', `Bearer ${regularUserToken}`)
         .send(invalidOrder);
       
-      // Should fail due to missing franchiseId
       expect(response.status).toBeGreaterThanOrEqual(400);
     });
 
@@ -223,7 +213,6 @@ describe('Order Router', () => {
       expect(response.status).toBeGreaterThanOrEqual(400);
     });
 
-    // Skipping empty items test due to timeout issues with factory API calls
 
     test('create order with invalid item format', async () => {
       const invalidOrder = {
@@ -252,7 +241,6 @@ describe('Order Router', () => {
         .set('Authorization', `Bearer ${regularUserToken}`)
         .send(invalidOrder);
       
-      // Your API might allow non-existent IDs
       expect(response.status).toBeGreaterThanOrEqual(200);
     });
 
@@ -268,7 +256,6 @@ describe('Order Router', () => {
         .set('Authorization', `Bearer ${regularUserToken}`)
         .send(invalidOrder);
       
-      // Your API might allow non-existent IDs
       expect(response.status).toBeGreaterThanOrEqual(200);
     });
   });

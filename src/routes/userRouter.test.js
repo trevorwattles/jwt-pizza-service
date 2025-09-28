@@ -167,7 +167,6 @@ describe('User Router', () => {
         .set('Authorization', `Bearer ${userToken}`)
         .send(updateData);
       
-      // API might require all fields, so accept error responses
       expect([200, 400, 500]).toContain(response.status);
       if (response.status === 200) {
         expect(response.body.user.name).toBe(updateData.name);
@@ -180,7 +179,6 @@ describe('User Router', () => {
         .set('Authorization', `Bearer ${userToken}`)
         .send({});
       
-      // API might require fields, so accept error responses
       expect([200, 400, 500]).toContain(response.status);
     });
 

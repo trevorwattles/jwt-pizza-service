@@ -68,13 +68,10 @@ describe('Auth Router', () => {
     });
 
     test('registration with duplicate email', async () => {
-      // Try to register the same user again
       const registerRes = await request(app)
         .post('/api/auth')
         .send(testUser);
       
-      // Your DB might allow duplicate registrations or handle them differently
-      // Just verify we get a response
       expect(registerRes.status).toBeGreaterThanOrEqual(200);
     });
   });
@@ -121,8 +118,6 @@ describe('Auth Router', () => {
         .put('/api/auth')
         .send({ email: testUser.email });
       
-      // Your API might handle this differently than expected
-      // Just verify we get a response (could be 200 with error or 400+)
       expect(loginRes.status).toBeGreaterThanOrEqual(200);
     });
   });

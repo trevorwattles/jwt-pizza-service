@@ -156,7 +156,6 @@ describe('Franchise Router', () => {
       const response = await request(app)
         .delete('/api/franchise/1');
       
-      // This endpoint doesn't require auth in the code, so it should work
       expect([200, 404, 500]).toContain(response.status);
     });
 
@@ -165,7 +164,6 @@ describe('Franchise Router', () => {
         .delete('/api/franchise/99999')
         .set('Authorization', `Bearer ${regularUserToken}`);
       
-      // Should work regardless of auth since no auth check in delete
       expect([200, 404, 500]).toContain(response.status);
     });
 
