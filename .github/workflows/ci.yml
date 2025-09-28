@@ -70,8 +70,11 @@ jobs:
         run: |
             echo "NET_ID length: ${#NET_ID}"
             echo "NET_ID starts with: ${NET_ID:0:3}"
+            echo "API_KEY length: ${#FACTORY_API_KEY}"
+            echo "API_KEY starts with: ${FACTORY_API_KEY:0:3}"
         env:
             NET_ID: ${{ secrets.NET_ID }}
+            FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
     
       - name: Update coverage
         run: |
