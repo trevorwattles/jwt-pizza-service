@@ -66,7 +66,13 @@ jobs:
           version=$(date +'%Y%m%d.%H%M%S')
           echo "version=$version" >> "$GITHUB_OUTPUT"
           printf '{"version": "%s" }' "$version" > src/version.json
-
+      - name: Debug secrets
+        run: |
+            echo "NET_ID length: ${#NET_ID}"
+            echo "NET_ID starts with: ${NET_ID:0:3}"
+        env:
+            NET_ID: ${{ secrets.NET_ID }}
+    
       - name: Update coverage
         run: |
           coverage=$(jq '.total.lines.pct' coverage/coverage-summary.json)
