@@ -142,7 +142,8 @@ class DB {
         // Delete the user
         await this.query(connection, `DELETE FROM user WHERE id=?`, [userId]);
         await connection.commit();
-      } catch (err) {
+      } catch {
+        // Remove 'err' parameter or prefix with underscore
         await connection.rollback();
         throw new StatusCodeError('unable to delete user', 500);
       }
