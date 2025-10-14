@@ -222,7 +222,7 @@ describe('User Router', () => {
     });
 
     test('list users', async () => {
-      const [_user, userToken] = await registerUser(request(app));  // Add underscore
+      const [, userToken] = await registerUser(request(app));
       const listUsersRes = await request(app)
         .get('/api/user')
         .set('Authorization', 'Bearer ' + userToken);
@@ -230,7 +230,7 @@ describe('User Router', () => {
     });
 
     test('list users returns user data', async () => {
-      const [_user, userToken] = await registerUser(request(app));  // Add underscore
+      const [, userToken] = await registerUser(request(app));
       const listUsersRes = await request(app)
         .get('/api/user')
         .set('Authorization', 'Bearer ' + userToken);
@@ -246,7 +246,7 @@ describe('User Router', () => {
     });
 
     test('list users with pagination', async () => {
-      const [_user, userToken] = await registerUser(request(app));  // Add underscore
+      const [, userToken] = await registerUser(request(app));
       
       // Test page 1 with limit 2
       const page1Res = await request(app)
@@ -258,7 +258,7 @@ describe('User Router', () => {
     });
 
     test('list users with name filter', async () => {
-      const [_user, userToken] = await registerUser(request(app));  // Add underscore
+      const [, userToken] = await registerUser(request(app));
       
       const filterRes = await request(app)
         .get('/api/user?name=pizza*')
@@ -272,6 +272,7 @@ describe('User Router', () => {
       });
     });
   });
+
   describe('DELETE /api/user/:userId', () => {
     test('delete user', async () => {
       const [user, userToken] = await registerUser(request(app));
