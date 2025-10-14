@@ -222,14 +222,15 @@ describe('User Router', () => {
     });
 
     test('list users', async () => {
-      const [user, userToken] = await registerUser(request(app));
+      const [_user, userToken] = await registerUser(request(app));  // Add underscore
       const listUsersRes = await request(app)
         .get('/api/user')
         .set('Authorization', 'Bearer ' + userToken);
       expect(listUsersRes.status).toBe(200);
     });
+
     test('list users returns user data', async () => {
-      const [user, userToken] = await registerUser(request(app));
+      const [_user, userToken] = await registerUser(request(app));  // Add underscore
       const listUsersRes = await request(app)
         .get('/api/user')
         .set('Authorization', 'Bearer ' + userToken);
@@ -243,8 +244,9 @@ describe('User Router', () => {
       expect(listUsersRes.body.users[0]).toHaveProperty('email');
       expect(listUsersRes.body.users[0]).toHaveProperty('roles');
     });
+
     test('list users with pagination', async () => {
-      const [user, userToken] = await registerUser(request(app));
+      const [_user, userToken] = await registerUser(request(app));  // Add underscore
       
       // Test page 1 with limit 2
       const page1Res = await request(app)
@@ -256,7 +258,7 @@ describe('User Router', () => {
     });
 
     test('list users with name filter', async () => {
-      const [user, userToken] = await registerUser(request(app));
+      const [_user, userToken] = await registerUser(request(app));  // Add underscore
       
       const filterRes = await request(app)
         .get('/api/user?name=pizza*')
