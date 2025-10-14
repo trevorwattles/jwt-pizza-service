@@ -2,6 +2,7 @@ const express = require('express');
 const { asyncHandler } = require('../endpointHelper.js');
 const { DB, Role } = require('../database/database.js');
 const { authRouter, setAuth } = require('./authRouter.js');
+const { useSyncExternalStore } = require('react');
 
 const userRouter = express.Router();
 
@@ -48,6 +49,24 @@ userRouter.put(
     const updatedUser = await DB.updateUser(userId, name, email, password);
     const auth = await setAuth(updatedUser);
     res.json({ user: updatedUser, token: auth });
+  })
+);
+
+// deleteUser
+userRouter.delete(
+  '/:userId',
+  authRouter.authenticateToken,
+  asyncHandler(async (req, res) => {
+    res.json({ message: 'not implemented' });
+  })
+);
+
+// listUsers
+userRouter.get(
+  '/',
+  authRouter.authenticateToken,
+  asyncHandler(async (req, res) => {
+    res.json({ message: 'not implemented', users: [], more: false });
   })
 );
 
