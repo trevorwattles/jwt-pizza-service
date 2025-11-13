@@ -189,6 +189,7 @@ class Logger {
   }
 
   // Send logs to Grafana
+  //comment
   async sendToGrafana(streams) {
     const body = JSON.stringify({ streams });
     console.log('Attempting to send to Grafana...');
