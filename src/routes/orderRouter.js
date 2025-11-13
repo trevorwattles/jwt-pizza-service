@@ -4,6 +4,7 @@ const { Role, DB } = require('../database/database.js');
 const { authRouter } = require('./authRouter.js');
 const { asyncHandler, StatusCodeError } = require('../endpointHelper.js');
 const metrics = require('../metrics.js');
+const logger = require('../logger.js');
 
 const orderRouter = express.Router();
 
@@ -82,29 +83,45 @@ orderRouter.post(
     const order = await DB.addDinerOrder(req.user, orderReq);
     
     const startTime = Date.now();
-    const r = await fetch(`${config.factory.url}/api/order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', authorization: `Bearer ${config.factory.apiKey}` },
-      body: JSON.stringify({ diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order }),
-    });
-    const latency = Date.now() - startTime;
+    const factoryRequestBody = { diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order };
     
-    const j = await r.json();
-    if (r.ok) {
-      // Calculate revenue from the order
-      const revenue = order.items.reduce((sum, item) => sum + item.price, 0);
-      const pizzaCount = order.items.length;
+    let factoryResponse;
+    let error = null;
+    
+    try {
+      const r = await fetch(`${config.factory.url}/api/order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', authorization: `Bearer ${config.factory.apiKey}` },
+        body: JSON.stringify(factoryRequestBody),
+      });
+      const latency = Date.now() - startTime;
       
-      // Track successful pizza purchase
-      metrics.trackPizzaPurchase(true, latency, pizzaCount, revenue);
+      const j = await r.json();
+      factoryResponse = j;
       
-      res.send({ order, followLinkToEndChaos: j.reportUrl, jwt: j.jwt });
-    } else {
-      // Track failed pizza purchase
-      const pizzaCount = order.items.length;
-      metrics.trackPizzaPurchase(false, latency, pizzaCount, 0);
+      // Log factory request
+      logger.logFactoryRequest(factoryRequestBody, j, r.status, latency, r.ok ? null : new Error('Factory request failed'));
       
-      res.status(500).send({ message: 'Failed to fulfill order at factory', followLinkToEndChaos: j.reportUrl });
+      if (r.ok) {
+        // Calculate revenue from the order
+        const revenue = order.items.reduce((sum, item) => sum + item.price, 0);
+        const pizzaCount = order.items.length;
+        
+        // Track successful pizza purchase
+        metrics.trackPizzaPurchase(true, latency, pizzaCount, revenue);
+        
+        res.send({ order, followLinkToEndChaos: j.reportUrl, jwt: j.jwt });
+      } else {
+        // Track failed pizza purchase
+        const pizzaCount = order.items.length;
+        metrics.trackPizzaPurchase(false, latency, pizzaCount, 0);
+        
+        res.status(500).send({ message: 'Failed to fulfill order at factory', followLinkToEndChaos: j.reportUrl });
+      }
+    } catch (err) {
+      const latency = Date.now() - startTime;
+      logger.logFactoryRequest(factoryRequestBody, null, 0, latency, err);
+      throw err;
     }
   })
 );

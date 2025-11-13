@@ -4,6 +4,7 @@ const config = require('../config.js');
 const { StatusCodeError } = require('../endpointHelper.js');
 const { Role } = require('../model/model.js');
 const dbModel = require('./dbModel.js');
+const logger = require('../logger.js');
 class DB {
   constructor() {
     this.initialized = this.initializeDatabase();
@@ -344,8 +345,20 @@ class DB {
   }
 
   async query(connection, sql, params) {
-    const [results] = await connection.execute(sql, params);
-    return results;
+    const startTime = Date.now();
+    let error = null;
+    
+    try {
+      const [results] = await connection.execute(sql, params);
+      const duration = Date.now() - startTime;
+      logger.logDbQuery(sql, params, duration);
+      return results;
+    } catch (err) {
+      const duration = Date.now() - startTime;
+      error = err;
+      logger.logDbQuery(sql, params, duration, err);
+      throw err;
+    }
   }
 
   async getID(connection, key, value, table) {
@@ -395,7 +408,7 @@ class DB {
         }
 
         if (!dbExists) {
-          const defaultAdmin = { name: '常用名字', email: 'a@jwt.com', password: 'admin', roles: [{ role: Role.Admin }] };
+          const defaultAdmin = { name: 'å¸¸ç”¨åå­—', email: 'a@jwt.com', password: 'admin', roles: [{ role: Role.Admin }] };
           await this.addUser(defaultAdmin);
         }
       } finally {
