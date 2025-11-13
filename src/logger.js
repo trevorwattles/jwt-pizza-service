@@ -224,4 +224,3 @@ process.on('SIGINT', () => {
 });
 
 module.exports = logger;
-# Logging enabled
