@@ -191,7 +191,11 @@ class Logger {
   // Send logs to Grafana
   async sendToGrafana(streams) {
     const body = JSON.stringify({ streams });
-
+    console.log('Attempting to send to Grafana...');
+    console.log('URL:', config.logging.url);
+    console.log('API Key exists:', !!config.logging.apiKey);
+    console.log('API Key length:', config.logging.apiKey?.length);
+    console.log('API Key starts with glc_:', config.logging.apiKey?.startsWith('glc_'));
     const response = await fetch(config.logging.url, {
       method: 'POST',
       body: body,
