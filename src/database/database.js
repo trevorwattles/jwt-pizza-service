@@ -346,7 +346,6 @@ class DB {
 
   async query(connection, sql, params) {
     const startTime = Date.now();
-    let error = null;
     
     try {
       const [results] = await connection.execute(sql, params);
@@ -355,7 +354,6 @@ class DB {
       return results;
     } catch (err) {
       const duration = Date.now() - startTime;
-      error = err;
       logger.logDbQuery(sql, params, duration, err);
       throw err;
     }

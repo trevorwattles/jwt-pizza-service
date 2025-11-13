@@ -85,9 +85,6 @@ orderRouter.post(
     const startTime = Date.now();
     const factoryRequestBody = { diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order };
     
-    let factoryResponse;
-    let error = null;
-    
     try {
       const r = await fetch(`${config.factory.url}/api/order`, {
         method: 'POST',
@@ -97,7 +94,6 @@ orderRouter.post(
       const latency = Date.now() - startTime;
       
       const j = await r.json();
-      factoryResponse = j;
       
       // Log factory request
       logger.logFactoryRequest(factoryRequestBody, j, r.status, latency, r.ok ? null : new Error('Factory request failed'));
